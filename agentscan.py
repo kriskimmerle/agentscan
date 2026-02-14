@@ -1089,6 +1089,46 @@ def format_json(reports: list[AgentReport], aggregate: list[Finding]) -> str:
     return json.dumps(data, indent=2)
 
 
+def format_json_summary(reports: list[AgentReport], aggregate: list[Finding]) -> str:
+    """Format results as condensed JSON summary."""
+    all_findings = []
+    for r in reports:
+        all_findings.extend(r.findings)
+    all_findings.extend(aggregate)
+    grade, score = calculate_grade(all_findings)
+
+    # Count findings by severity
+    severity_counts = {"critical": 0, "high": 0, "medium": 0, "low": 0, "info": 0}
+    for f in all_findings:
+        severity_counts[f.severity] = severity_counts.get(f.severity, 0) + 1
+
+    # Get top critical/high findings (max 5 each)
+    critical_findings = [f for f in all_findings if f.severity == "critical"][:5]
+    high_findings = [f for f in all_findings if f.severity == "high"][:5]
+
+    data = {
+        "version": __version__,
+        "grade": grade,
+        "risk_score": score,
+        "total_findings": len(all_findings),
+        "severity_counts": severity_counts,
+        "installed_agents": [
+            {"name": r.name, "version": r.version, "mcp_servers": len(r.mcp_servers)}
+            for r in reports if r.installed
+        ],
+        "top_critical": [
+            {"category": f.category, "title": f.title}
+            for f in critical_findings
+        ],
+        "top_high": [
+            {"category": f.category, "title": f.title}
+            for f in high_findings
+        ],
+    }
+
+    return json.dumps(data, indent=2)
+
+
 # ─── Main ────────────────────────────────────────────────────────────
 
 
@@ -1101,6 +1141,10 @@ def main() -> int:
     parser.add_argument(
         "--format", "-f", choices=["text", "json"], default="text",
         help="Output format (default: text)",
+    )
+    parser.add_argument(
+        "--json-summary", action="store_true",
+        help="Output condensed JSON summary with grade, counts, and top findings",
     )
     parser.add_argument(
         "--no-color", action="store_true",
@@ -1164,7 +1208,9 @@ def main() -> int:
     aggregate = aggregate_findings(reports)
 
     # Output
-    if args.format == "json":
+    if args.json_summary:
+        print(format_json_summary(reports, aggregate))
+    elif args.format == "json":
         print(format_json(reports, aggregate))
     else:
         no_color = args.no_color or not sys.stdout.isatty()
