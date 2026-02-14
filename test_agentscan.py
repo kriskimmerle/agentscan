@@ -116,7 +116,7 @@ class TestSecretDetection(unittest.TestCase):
 
     def test_scan_for_secrets_openai_key(self):
         """Test detection of OpenAI API key"""
-        text = 'sk-1234567890abcdefghijklmnopqrstuvwxyzABCDEFGH'
+        text = 'sk-proj-1234567890abcdefghijklmnopqrstuvwxyzABCDEFGH1234'
         result = agentscan.scan_for_secrets(text)
         self.assertTrue(any('OpenAI' in r for r in result))
 
@@ -134,7 +134,7 @@ class TestSecretDetection(unittest.TestCase):
 
     def test_scan_for_secrets_github_pat(self):
         """Test detection of GitHub PAT"""
-        text = 'ghp_1234567890abcdefghijklmnopqrstuv'
+        text = 'ghp_1234567890abcdefghijklmnopqrstuvwxyz'
         result = agentscan.scan_for_secrets(text)
         self.assertTrue(any('GitHub PAT' in r for r in result))
 
@@ -163,7 +163,7 @@ class TestSecretDetection(unittest.TestCase):
     def test_check_env_exposure_secret_in_value(self):
         """Test detection of secrets in env var values"""
         env = {
-            'CUSTOM_VAR': 'ghp_1234567890abcdefghijklmnopqrstuv'
+            'CUSTOM_VAR': 'ghp_1234567890abcdefghijklmnopqrstuvwxyz'
         }
         result = agentscan.check_env_exposure(env)
         self.assertTrue(any('CUSTOM_VAR' in r and 'GitHub PAT' in r for r in result))
