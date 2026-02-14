@@ -1,3 +1,5 @@
+![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg) ![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)
+
 # agentscan
 
 **AI Agent Security Posture Scanner** — enumerate all AI coding agents on a machine and map their aggregate permission surface.
