@@ -1,4 +1,6 @@
-![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg) ![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)
+![CI](https://github.com/kriskimmerle/agentscan/actions/workflows/test.yml/badge.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
+![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)
 
 # agentscan
 
